@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "PLATFORMIO",
+			"path": "../.."
+		},
+		{
+			"name": "frist",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/*.rpyc": true,
+			"**/*.rpa": true,
+			"**/*.rpymc": true,
+			"**/cache/": true
+		}
+	}
+}
