@@ -18,11 +18,11 @@ const int CH_R1 = 0, CH_G1 = 1, CH_B1 = 2;
 const int CH_R2 = 3, CH_G2 = 4, CH_B2 = 5;
 const int CH_R3 = 6, CH_G3 = 7, CH_B3 = 8;
 
-// 공통 캐소드 기준 (켜기=255, 끄기=0)
+
 const int ON = 255;
 const int OFF = 0;
 
-String serverUrl = "http://10.150.1.196:8000/signal"; // FastAPI 주소
+String serverUrl = "http://10.150.1.196:8000/signal"; // 주소
 
 void pwmAttachAll() {
   ledcAttachPin(R1, CH_R1); ledcAttachPin(G1, CH_G1); ledcAttachPin(BL1, CH_B1);
@@ -40,32 +40,29 @@ void allOff() {
   ledcWrite(CH_R3, OFF); ledcWrite(CH_G3, OFF); ledcWrite(CH_B3, OFF);
 }
 
-// 신호등 동작: 오직 하나의 LED 모듈만 ON
-void showRedTop() {           // 상단 빨강
+void showRedTop() {           // 빨강
   allOff();
   ledcWrite(CH_R1, ON);
 }
 
-void showYellowMiddle() {     // 중간 노랑 = 빨강+초록
+void showYellowMiddle() {     // 노랑
   allOff();
   ledcWrite(CH_R2, ON);
   ledcWrite(CH_G2, ON);
 }
 
-void showBlueBottom() {       // 하단 파랑
+void showBlueBottom() {       //  파랑
   allOff();
   ledcWrite(CH_B3, ON);
 }
 
 char parseSignalFromJson(const String& json) {
-  // 매우 단순 파서: {"signal":"R"} 형태 가정
   int i = json.indexOf("\"signal\"");
   if (i < 0) return 'X';
   int q1 = json.indexOf('"', i + 8);
   int q2 = json.indexOf('"', q1 + 1);
   int q3 = json.indexOf('"', q2 + 1);
   if (q2 < 0 || q3 < 0) return 'X';
-  // q2+1 에서 한 글자 신호 기대
   if (q3 == q2 + 2) {
     return json[q2 + 1];
   }
@@ -100,7 +97,7 @@ void loop() {
         case 'R': showRedTop(); break;
         case 'G': showYellowMiddle(); break;
         case 'B': showBlueBottom(); break;
-        default:  allOff(); break;  // 알 수 없는 명령 → 모두 OFF
+        default:  allOff(); break; 
       }
     } else {
       Serial.printf("HTTP GET failed: %d\n", code);
