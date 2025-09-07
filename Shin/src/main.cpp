@@ -2,8 +2,8 @@
 #include <HTTPClient.h>
 
 // WiFi 설정
-const char* ssid = "bssm_free";
-const char* password = "bssm_free";
+const char* ssid = "bssm_free2";
+const char* password = "bssm_free2";
 
 // GPIO 핀 매핑
 const int R1 = 25, G1 = 26, BL1 = 27;   //빨강
