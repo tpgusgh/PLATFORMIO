@@ -19,7 +19,7 @@ const int ON = 255;
 const int OFF = 0;
 
 
-String serverUrl = "https://port-0-saraminsicknodejs-m73ptgy69b25289e.sel4.cloudtype.app/esp";
+String serverUrl = "https://saraminsick-612486206975.asia-northeast3.run.app/esp";
 
 // PWM 초기화
 void pwmAttachAll() {
