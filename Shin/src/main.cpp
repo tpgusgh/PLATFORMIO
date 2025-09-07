@@ -5,34 +5,43 @@
 const char* ssid = "bssm_free";
 const char* password = "bssm_free";
 
-// GPIO 핀 매핑
-// 상단 LED
+
+
 const int R1 = 25, G1 = 26, BL1 = 27;
-// 중간 LED
+
 const int R2 = 14, G2 = 12, B2 = 13;
-// 하단 LED
+
 const int R3 = 19, G3 = 18, B3 = 5;
 
-// PWM 채널 (0~15 사용 가능)
+
 const int CH_R1 = 0, CH_G1 = 1, CH_B1 = 2;
 const int CH_R2 = 3, CH_G2 = 4, CH_B2 = 5;
 const int CH_R3 = 6, CH_G3 = 7, CH_B3 = 8;
 
-
 const int ON = 255;
 const int OFF = 0;
 
-String serverUrl = "http://10.150.1.196:8000/signal"; // 주소
+
+String serverUrl = "https://port-0-saraminsicknodejs-m73ptgy69b25289e.sel4.cloudtype.app/esp"; 
+
 
 void pwmAttachAll() {
-  ledcAttachPin(R1, CH_R1); ledcAttachPin(G1, CH_G1); ledcAttachPin(BL1, CH_B1);
-  ledcAttachPin(R2, CH_R2); ledcAttachPin(G2, CH_G2); ledcAttachPin(B2, CH_B2);
-  ledcAttachPin(R3, CH_R3); ledcAttachPin(G3, CH_G3); ledcAttachPin(B3, CH_B3);
-  // 5kHz, 8-bit
-  ledcSetup(CH_R1, 5000, 8); ledcSetup(CH_G1, 5000, 8); ledcSetup(CH_B1, 5000, 8);
-  ledcSetup(CH_R2, 5000, 8); ledcSetup(CH_G2, 5000, 8); ledcSetup(CH_B2, 5000, 8);
-  ledcSetup(CH_R3, 5000, 8); ledcSetup(CH_G3, 5000, 8); ledcSetup(CH_B3, 5000, 8);
+
+  ledcSetup(CH_R1, 5000, 8); ledcAttachPin(R1, CH_R1);
+  ledcSetup(CH_G1, 5000, 8); ledcAttachPin(G1, CH_G1);
+  ledcSetup(CH_B1, 5000, 8); ledcAttachPin(BL1, CH_B1);
+
+
+  ledcSetup(CH_R2, 5000, 8); ledcAttachPin(R2, CH_R2);
+  ledcSetup(CH_G2, 5000, 8); ledcAttachPin(G2, CH_G2);
+  ledcSetup(CH_B2, 5000, 8); ledcAttachPin(B2, CH_B2);
+
+
+  ledcSetup(CH_R3, 5000, 8); ledcAttachPin(R3, CH_R3);
+  ledcSetup(CH_G3, 5000, 8); ledcAttachPin(G3, CH_G3);
+  ledcSetup(CH_B3, 5000, 8); ledcAttachPin(B3, CH_B3);
 }
+
 
 void allOff() {
   ledcWrite(CH_R1, OFF); ledcWrite(CH_G1, OFF); ledcWrite(CH_B1, OFF);
@@ -40,21 +49,23 @@ void allOff() {
   ledcWrite(CH_R3, OFF); ledcWrite(CH_G3, OFF); ledcWrite(CH_B3, OFF);
 }
 
-void showRedTop() {           // 빨강
+// 신호등 함수
+void showRedTop() {          
   allOff();
   ledcWrite(CH_R1, ON);
 }
 
-void showYellowMiddle() {     // 노랑
+void showYellowMiddle() {    
   allOff();
   ledcWrite(CH_R2, ON);
   ledcWrite(CH_G2, ON);
 }
 
-void showBlueBottom() {       //  파랑
+void showGreenBottom() {     
   allOff();
-  ledcWrite(CH_B3, ON);
+  ledcWrite(CH_G3, ON);
 }
+
 
 char parseSignalFromJson(const String& json) {
   int i = json.indexOf("\"signal\"");
@@ -75,12 +86,16 @@ void setup() {
   pinMode(R1, OUTPUT); pinMode(G1, OUTPUT); pinMode(BL1, OUTPUT);
   pinMode(R2, OUTPUT); pinMode(G2, OUTPUT); pinMode(B2, OUTPUT);
   pinMode(R3, OUTPUT); pinMode(G3, OUTPUT); pinMode(B3, OUTPUT);
+
   pwmAttachAll();
   allOff();
 
   WiFi.begin(ssid, password);
   Serial.print("WiFi connecting");
-  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  while (WiFi.status() != WL_CONNECTED) { 
+    delay(500); 
+    Serial.print("."); 
+  }
   Serial.println("\nWiFi Connected, IP: " + WiFi.localIP().toString());
 }
 
@@ -95,8 +110,8 @@ void loop() {
       char sig = parseSignalFromJson(payload);
       switch (sig) {
         case 'R': showRedTop(); break;
-        case 'G': showYellowMiddle(); break;
-        case 'B': showBlueBottom(); break;
+        case 'Y': showYellowMiddle(); break;
+        case 'G': showGreenBottom(); break;
         default:  allOff(); break; 
       }
     } else {
@@ -104,5 +119,5 @@ void loop() {
     }
     http.end();
   }
-  delay(1000);
+  delay(1000); 
 }
