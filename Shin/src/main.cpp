@@ -51,8 +51,8 @@ void showRedTop() {
 
 void showYellowMiddle() {    
   allOff();
-  ledcWrite(CH_R2, ON);
-  ledcWrite(CH_G2, ON);
+  ledcWrite(CH_R2, 255);   
+  ledcWrite(CH_G2, 160);  
 }
 
 void showGreenBottom() {     
@@ -111,5 +111,5 @@ void loop() {
     }
     http.end();
   }
-  delay(1000); 
+  delay(500); 
 }
