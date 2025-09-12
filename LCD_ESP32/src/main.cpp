@@ -50,6 +50,6 @@ void loop() {
       Serial.printf("Frame size mismatch: %s (%d bytes)\n", filename, bytesRead);
     }
 
-    delay(66); // 약 15fps (1000/15 ≈ 66ms)
+    delay(66); 
   }
 }
