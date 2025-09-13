@@ -1,55 +1,72 @@
-#include <Arduino.h>
 #include <TFT_eSPI.h>
-#include <FS.h>
-#include <SPIFFS.h>
+#include <SPI.h>
+#include <SD.h>
 
-TFT_eSPI tft = TFT_eSPI();  // 핀은 User_Setup.h에 정의되어 있음
+TFT_eSPI tft = TFT_eSPI();  // TFT 객체 생성
 
-// LCD 해상도 (Adafruit 1.44" ST7735R → 128x128)
-#define LCD_WIDTH  128
-#define LCD_HEIGHT 128
+#define SD_CS 15  // SD 카드 CS 핀
+
+File bmpFile;
+
+// 최대 128픽셀 폭까지 버퍼 사용
+uint16_t rowBuffer[128];  
+
+void drawBmp(const char *filename, int x, int y) {
+  bmpFile = SD.open(filename);
+  if (!bmpFile) {
+    Serial.println("파일 열기 실패!");
+    return;
+  }
+
+  // BMP 헤더 읽기 (54바이트)
+  uint8_t header[54];
+  bmpFile.read(header, 54);
+
+  // BMP 파일 정보
+  int bmpWidth  = header[18] | (header[19] << 8);
+  int bmpHeight = header[22] | (header[23] << 8);
+  int rowSize = ((bmpWidth * 3 + 3) & ~3); // 4바이트 배수
+
+  if (bmpWidth > 128 || bmpHeight > 128) {
+    Serial.println("BMP가 화면보다 큼!");
+    bmpFile.close();
+    return;
+  }
+
+  for (int row = 0; row < bmpHeight; row++) {
+    int pixelIndex = 0;
+    for (int col = 0; col < bmpWidth; col++) {
+      uint8_t b = bmpFile.read();
+      uint8_t g = bmpFile.read();
+      uint8_t r = bmpFile.read();
+      rowBuffer[pixelIndex++] = tft.color565(r, g, b);
+    }
+
+    // 남는 패딩 바이트 처리
+    for (int i = pixelIndex * 3; i < rowSize; i++) {
+      bmpFile.read();
+    }
+
+    // TFT에 한 줄 전송 (BMP는 아래->위 저장)
+    tft.pushColors(rowBuffer, bmpWidth, true);
+  }
+
+  bmpFile.close();
+}
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("ESP32 LCD Video Player (ST7735R)");
-
-  // LCD 초기화
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
 
-  // SPIFFS 마운트
-  if (!SPIFFS.begin(true)) {
-    Serial.println("SPIFFS Mount Failed!");
-    while (1);
+  if (!SD.begin(SD_CS)) {
+    Serial.println("SD 초기화 실패!");
+    return;
   }
-  Serial.println("SPIFFS mounted successfully!");
+
+  drawBmp("/test.bmp", 0, 0);
 }
 
 void loop() {
-  // frame_0001.raw ~ frame_0100.raw 반복 재생
-  for (int i = 1; i <= 100; i++) {
-    char filename[32];
-    sprintf(filename, "/frame_%04d.raw", i);
-
-    fs::File f = SPIFFS.open(filename, "r");
-    if (!f) {
-      Serial.printf("File not found: %s\n", filename);
-      continue;
-    }
-
-    // 프레임 버퍼 (RGB565, 128x128)
-    static uint16_t buffer[LCD_WIDTH * LCD_HEIGHT];
-
-    size_t bytesRead = f.read((uint8_t*)buffer, sizeof(buffer));
-    f.close();
-
-    if (bytesRead == sizeof(buffer)) {
-      tft.pushImage(0, 0, LCD_WIDTH, LCD_HEIGHT, buffer);
-    } else {
-      Serial.printf("Frame size mismatch: %s (%d bytes)\n", filename, bytesRead);
-    }
-
-    delay(66); 
-  }
 }
