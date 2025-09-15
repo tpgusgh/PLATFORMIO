@@ -14,6 +14,8 @@ bool initLittleFS()
   return true;
 }
 
+
+
 // 파일시스템 정보 출력 함수
 void printFilesystemInfo()
 {
@@ -25,6 +27,20 @@ void printFilesystemInfo()
   Serial.print(usedBytes);
   Serial.println(" bytes");
 }
+
+
+
+bool readLittleFS()
+{
+  File f = LittleFS.open("/myWiFi.txt", FILE_READ);
+
+  while(f.available())
+  {
+    Serial.write(f.read());
+  }
+  f.close();
+}
+
 
 // 트리 형태로 구조를 예쁘게 출력
 void printTree(fs::FS &fs, const char *dirname, uint8_t levels, uint8_t indent)

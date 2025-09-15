@@ -10,9 +10,9 @@ void syncNTP(){}
 void setup() {
   Serial.begin(115200);
 
-  // initLittleFS();
-  // writeLittleFS();
-  // readLittleFS();
+  initLittleFS();
+  writeLittleFS();
+  readLittleFS();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
