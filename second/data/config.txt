@@ -1,0 +1,7 @@
+{
+  "wifi": {
+    "ssid": "otacohome",
+    "password": "0587778AM!",
+    "timeout": 10000
+  }
+}

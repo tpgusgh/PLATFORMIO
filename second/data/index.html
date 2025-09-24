@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>ESP32S3 WiFi Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="topnav">
+        <h1>ESP32S3 WiFi Manager</h1>
+    </div>
+    <div class="content">
+        <div class="card-grid">
+            <div class="card">
+                <p class="device-id"><span id="deviceId" class="device-id-value">loading...</span></p>
+                <form action="/" method="POST">
+                    <p>
+                        <label for="ssid">WiFi 이름 (SSID)</label>
+                        <input type="text" id="ssid" name="ssid" placeholder="WiFi 네트워크 이름을 입력하세요"><br>
+                        <label for="pass">WiFi 비밀번호</label>
+                        <input type="text" id="pass" name="pass" placeholder="WiFi 비밀번호를 입력하세요"><br>
+                        <input type="submit" value="설정 저장">
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="version">v1.00</div>
+    <script>
+        // 페이지 로드 시 장치 ID 가져오기
+        window.addEventListener('load', function() {
+            fetch('/device-id')
+                .then(response => {
+                    if (!response.ok) throw new Error('Not found');
+                    return response.text();
+                })
+                .then(deviceId => {
+                    document.getElementById('deviceId').textContent = deviceId;
+                })
+                .catch(error => {
+                    // 로컬 테스트 시 임의의 값 표시
+                    document.getElementById('deviceId').textContent = 'TEST01234567';
+                    console.warn('device-id API not found, using test value.');
+                });
+        });
+    </script>
+</body>
+
+</html>
+
+
+index.html
+config.txt 표시 중입니다.
