@@ -86,7 +86,7 @@ void setup() {
     delay(500); 
     Serial.print("."); 
   }
-  Serial.println("\nWiFi Connected, IP: " + WiFi.localIP().toString());
+  Serial.println("\nWiFi 연결됨, IP: " + WiFi.localIP().toString());
 }
 
 void loop() {
