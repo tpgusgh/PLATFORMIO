@@ -1,31 +1,24 @@
-//                            USER DEFINED SETTINGS
-//   Set driver type, fonts to be loaded, pins used and SPI control method etc.
-
-// User defined information reported by "Read_User_Setup" test & diagnostics example
-#define USER_SETUP_INFO "ESP32 + ST7735R (Adafruit 1.44 TFT)"
-
 // ###########################################################################
 // Section 1. Driver selection
 // ###########################################################################
 
-#define ST7735_DRIVER      // Adafruit 1.44" TFT uses ST7735R
-#define ST7735_GREENTAB    // Most common tab type for 1.44" 128x128
-#define TFT_RGB_ORDER TFT_BGR  // Adafruit ST7735R uses BGR order
+#define ILI9488_DRIVER          // ILI9488 드라이버 사용
+#define TFT_RGB_ORDER TFT_RGB   // 색상 순서 (색 이상 시 TFT_BGR로 변경 가능)
 
 // ###########################################################################
 // Section 2. Pin configuration for ESP32
 // ###########################################################################
 
-// SPI pins (VSPI on ESP32 DevKit v1)
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS    5   // Chip select control pin
-#define TFT_DC    2   // Data/Command control pin
-#define TFT_RST   4   // Reset pin (or connect to RST)
+#define TFT_MOSI 23             // SPI 데이터 출력 (TFT, SD 공용)
+#define TFT_MISO 19             // SPI 데이터 입력 (SD 전용)
+#define TFT_SCLK 18             // SPI 클럭 (TFT, SD 공용)
+#define TFT_CS   5        // TFT Chip Select
+#define TFT_DC   2              // TFT 데이터/명령 선택
+#define TFT_RST  4              // TFT 리셋
+#define TFT_BL   13             // 백라이트 핀 (모듈에 따라 VCC 직결 가능)
 
-// Backlight (Adafruit board has onboard transistor, so usually tied to VCC)
-// #define TFT_BL   22
-// #define TFT_BACKLIGHT_ON HIGH
+// SD 카드 핀 (SPI 공유)
+#define SD_CS   15               // SD 카드 Chip Select
 
 // ###########################################################################
 // Section 3. Fonts to be loaded
@@ -44,12 +37,5 @@
 // Section 4. SPI frequency settings
 // ###########################################################################
 
-// ST7735R is stable up to 27MHz. Use 20–27MHz for best performance.
-#define SPI_FREQUENCY  27000000
-
-// Optional reduced SPI frequency for reading TFT
-#define SPI_READ_FREQUENCY  20000000
-
-// Touch not used in Adafruit 1.44", so skip TOUCH_CS
-// #define TOUCH_CS 21
-
+#define SPI_FREQUENCY       27000000  // TFT용 SPI 최대 속도
+#define SPI_READ_FREQUENCY  20000000  // 읽기용 SPI 속도
