@@ -84,7 +84,7 @@ void drawRaw(const char* filename) {
 // =======================
 void loop() {
   const int startFrame = 1;
-  const int endFrame = 250;
+  const int endFrame = 25000;
 
   for (int i = startFrame; i <= endFrame; i++) {
     sprintf(filename, "/video/frame_%04d.raw", i);
@@ -94,6 +94,6 @@ void loop() {
     } else {
       Serial.printf("⚠️ 프레임 %d 없음\n", i);
       break;
-    }
+    } 
   }
 }
