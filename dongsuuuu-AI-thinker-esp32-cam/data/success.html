@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>PulseFly WiFi Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="topnav">
+        <h1>PulseFly WiFi Manager</h1>
+    </div>
+    <div class="content">
+        <div class="card-grid">
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="color: #034078; margin-bottom: 1rem;">WiFi 설정 완료</h2>
+                    <p style="color: #666; line-height: 1.6;">
+                        WiFi 설정이 성공적으로 저장되었습니다.<br>
+                        장치가 재부팅되어 새로운 설정으로 연결됩니다.
+                    </p>
+                </div>
+                
+                <div class="device-id">
+                    <h3 style="color: #034078; margin-bottom: 1rem;">장치 정보</h3>
+                    <div style="margin: 1rem 0;">
+                        <label style="color: #333; font-weight: bold;">장치 ID:</label>
+                        <span id="deviceId" class="device-id-value">로딩 중...</span>
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <label style="color: #333; font-weight: bold;">WiFi 이름:</label>
+                        <span id="ssidValue" style="color: #0A1128; font-family: monospace; font-size: 1.1rem;">로딩 중...</span>
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <label style="color: #333; font-weight: bold;">전화번호:</label>
+                        <span id="phoneValue" style="color: #0A1128; font-family: monospace; font-size: 1.1rem;">로딩 중...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="version">v1.00</div>
+    
+    <script>
+        // URL 파라미터에서 설정값 가져오기
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // 페이지 로드 시 정보 표시
+        window.addEventListener('load', function() {
+            // 장치 ID 가져오기
+            fetch('/device-id')
+                .then(response => {
+                    if (!response.ok) throw new Error('Not found');
+                    return response.text();
+                })
+                .then(deviceId => {
+                    document.getElementById('deviceId').textContent = deviceId;
+                })
+                .catch(error => {
+                    document.getElementById('deviceId').textContent = 'Unknown';
+                });
+            
+            // URL 파라미터에서 설정값 표시
+            const ssid = getUrlParameter('ssid');
+            const phone = getUrlParameter('phone');
+            
+            if (ssid) {
+                document.getElementById('ssidValue').textContent = ssid;
+            }
+            if (phone) {
+                document.getElementById('phoneValue').textContent = phone;
+            }
+            
+            // 10초 후 페이지 닫기
+            setTimeout(function() {
+                window.close();
+            }, 10000);
+        });
+    </script>
+</body>
+</html> 
