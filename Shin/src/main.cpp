@@ -111,5 +111,5 @@ void loop() {
     }
     http.end();
   }
-  delay(500); 
+  delay(1000); 
 }
